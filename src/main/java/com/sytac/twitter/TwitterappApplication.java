@@ -1,6 +1,5 @@
 package com.sytac.twitter;
 
-import com.sytac.twitter.repository.MessageRepository;
 import com.sytac.twitter.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +18,6 @@ public class TwitterappApplication implements CommandLineRunner {
 
     @Autowired
     private MessageService messageService;
-
-    @Autowired
-    private MessageRepository messageRepository;
     @Autowired
     private Environment environment;
 
@@ -33,7 +29,7 @@ public class TwitterappApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         LOG.info("Application started...");
         messageService.streamTweets();
-        messageRepository.writeToFile(messageRepository.getSortedTweetList());
+        messageService.writeToFile();
 
         if (!environment.acceptsProfiles(Profiles.of("test"))) {
             System.exit(0);

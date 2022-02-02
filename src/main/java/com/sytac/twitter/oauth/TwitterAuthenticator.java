@@ -20,6 +20,7 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 @Component
@@ -53,17 +54,17 @@ public class TwitterAuthenticator {
     }
 
     private String readPIN(RequestToken requestToken) {
-        String pin = null;
+        Optional<String> pin = Optional.empty();
         Scanner scanner = new Scanner(System.in);
         try {
             logger.info("\nGo to the following link in your browser:\n{}\n", requestToken.getAuthorizationURL());
             logger.info("\nPlease enter the retrieved PIN:");
             if (scanner.hasNextLine())
-                pin = scanner.next();
+                pin = Optional.of(scanner.next());
         } finally {
             scanner.close();
         }
-        return pin;
+        return pin.get();
     }
 
     public TwitterStream createTwitterStream(StatusListener statusListener) throws TwitterException {

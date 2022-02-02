@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 import twitter4j.*;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,6 +61,12 @@ public class MessageServiceImpl implements MessageService {
 
         LOG.info("Stream shutdown:{} elapsed time: {}, tweet count: {}", stopped, sw.getTotalTimeMillis(),
                 counter.get());
+    }
+
+    @Override
+    public boolean writeToFile() throws IOException {
+        return messageRepository.writeToFile(messageRepository.getSortedTweetList());
+
     }
 
     private void generateFilter() {

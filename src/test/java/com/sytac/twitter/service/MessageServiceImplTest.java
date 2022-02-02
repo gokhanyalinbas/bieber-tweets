@@ -14,10 +14,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import twitter4j.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -52,7 +55,14 @@ class MessageServiceImplTest {
     }
 
     @Test
-    public void listenerTest() {
+    void writeToFile() throws IOException {
+        when(messageRepository.writeToFile(any(ArrayList.class))).thenReturn(true);
+        when(messageRepository.getSortedTweetList()).thenReturn(new ArrayList<>());
+        assertEquals(true, messageService.writeToFile());
+    }
+
+    @Test
+    void listenerTest() {
 
         when(messageRepository.add(any(Tweet.class))).thenReturn(true);
         CountDownLatch latch = new CountDownLatch(10);

@@ -1,6 +1,5 @@
 package com.sytac.twitter;
 
-import com.sytac.twitter.repository.MessageRepositoryImpl;
 import com.sytac.twitter.service.MessageServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,10 +13,11 @@ import org.springframework.core.env.Profiles;
 import org.springframework.test.context.ActiveProfiles;
 import twitter4j.TwitterException;
 
-import java.util.ArrayList;
+import java.io.IOException;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -25,28 +25,23 @@ class TwitterappApplicationTest {
 
     @Mock
     private MessageServiceImpl messageService;
-    @Mock
-    private MessageRepositoryImpl messageRepository;
     @InjectMocks
     private TwitterappApplication twitterappApplication;
     @Mock
     private Environment environment;
 
     @BeforeEach
-    void setUp() throws TwitterException, InterruptedException {
+    void setUp() throws TwitterException, InterruptedException, IOException {
         MockitoAnnotations.openMocks(this);
         doNothing().when(messageService).streamTweets();
-        when(messageRepository.getSortedTweetList()).thenReturn(new ArrayList<>());
-        when(messageRepository.writeToFile(any(ArrayList.class))).thenReturn(true);
+        when(messageService.writeToFile()).thenReturn(true);
+        when(environment.acceptsProfiles(any(Profiles.class))).thenReturn(true);
+
 
     }
 
     @Test
     void run() throws Exception {
-        //ReflectionTestUtils.setField(twitterappApplication, "isTestEnvironment", true);
-        when(environment.acceptsProfiles(any(Profiles.class))).thenReturn(true);
         twitterappApplication.run();
-        verify(messageRepository, times(1)).getSortedTweetList();
-        verify(messageRepository, times(1)).writeToFile(any(ArrayList.class));
     }
 }
